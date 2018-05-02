@@ -17,12 +17,64 @@ from email.MIMEBase import MIMEBase
 from email.utils import COMMASPACE, formatdate
 from email import Encoders
 from pycorenlp import StanfordCoreNLP
+from flask import jsonify
+import requests
+from xml.dom import minidom
 
-# APP INITIALIZATION
+
+class ReverseProxied(object):
+    '''Wrap the application in this middleware and configure the 
+    front-end server to add these headers, to let you quietly bind 
+    this to a URL other than / and to an HTTP scheme that is 
+    different than what is used locally.
+
+    In nginx:
+    location /myprefix {
+        proxy_pass http://192.168.0.1:5001;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Scheme $scheme;
+        proxy_set_header X-Script-Name /myprefix;
+        }
+
+    :param app: the WSGI application
+    '''
+    def __init__(self, app):
+        self.app = app
+
+    def __call__(self, environ, start_response):
+        script_name = environ.get('HTTP_X_SCRIPT_NAME', '')
+        if script_name:
+            environ['SCRIPT_NAME'] = script_name
+            path_info = environ['PATH_INFO']
+            if path_info.startswith(script_name):
+                environ['PATH_INFO'] = path_info[len(script_name):]
+
+        scheme = environ.get('HTTP_X_SCHEME', '')
+        if scheme:
+            environ['wsgi.url_scheme'] = scheme
+        return self.app(environ, start_response)
+
+class PrefixMiddleware(object):
+
+    def __init__(self, app, prefix=''):
+        self.app = app
+        self.prefix = prefix
+
+    def __call__(self, environ, start_response):
+
+        if environ['PATH_INFO'].startswith(self.prefix):
+            environ['PATH_INFO'] = environ['PATH_INFO'][len(self.prefix):]
+            environ['SCRIPT_NAME'] = self.prefix
+            return self.app(environ, start_response)
+        else:
+            start_response('404', [('Content-Type', 'text/plain')])
+            return ["This url does not belong to the app.".encode()]
+
 core.NLP = StanfordCoreNLP(os.environ['PPAXE_CORENLP'])
 app = Flask(__name__) # create the application instance
-app.config.from_object(__name__) # load config from this file
-
+app.wsgi_app = ReverseProxied(app.wsgi_app)
+# app.wsgi_app = PrefixMiddleware(app.wsgi_app, prefix=environ.get('SCRIPT_NAME', ''))
 
 # FUNCTIONS
 # -----------------------------------------------------------------------
@@ -63,9 +115,11 @@ def home_form():
     identifiers = str()
     database    = str()
     response    = dict()
+    response['search'] = False
 
     if 'identifiers' in request.form:
         # Get Form parameters
+        response['search'] = True
         identifiers = request.form['identifiers']
         database = request.form['database']
         email = request.form['email']
@@ -127,6 +181,34 @@ def home_form():
     return render_template('home.html', identifiers=identifiers, response=response)
 
 
+@app.route('/querypubmed', methods=['GET'])
+def querypubmed():
+    '''
+    Queries PubMed and returns the pubmed identifiers
+    '''    
+    response    = dict()
+    response['error'] = True
+    if request.is_xhr:
+        query = request.args.get('query')
+        req = requests.get("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&rettype=count&term=%s" % (query) )
+        if req.status_code == 200:
+            md = minidom.parseString(req.text)
+            count = md.getElementsByTagName('Count')
+            count = count[0].firstChild.nodeValue
+            req = requests.get("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&retmax=%s&term=%s" % (count, query) )
+            if req.status_code == 200:
+                md = minidom.parseString(req.text)
+                theids = md.getElementsByTagName('Id')
+                try:
+                    theids = [ iden.firstChild.nodeValue for iden in theids ]
+                except Exception:
+                    response['error'] = True
+                if theids:
+                    response['identifiers'] = theids
+                    response['error'] = False
+        return jsonify(response)
+
+
 # -----------------
 @app.route('/tutorial', methods=['GET'])
 def tutorial():
@@ -134,6 +216,16 @@ def tutorial():
     Tutorial page
     '''
     return render_template('tutorial.html')
+
+
+
+@app.route('/download', methods=['GET'])
+def download():
+    '''
+    download page
+    '''
+    return render_template('download.html')
+
 
 # -----------------
 @app.route('/about', methods=['GET'])

@@ -12,10 +12,10 @@
       <nav class="navbar navbar-default">
         <div class="container-fluid">
           <ul class="nav navbar-nav navbar-buttons">
-            <li><a href="/">HOME</a></li>
-            <li class="active-navbar"><a href="/tutorial">TUTORIAL</a></li>
-            <li><a href="https://github.com/scastlara/ppaxe/archive/master.zip">DOWNLOAD</a></li>
-            <li><a href="/about">ABOUT</a></li>
+            <li><a href="{{ url_for('home_form') }}">HOME</a></li>
+            <li class="active-navbar"><a href="{{ url_for('tutorial') }}">TUTORIAL</a></li>
+            <li><a href="{{ url_for('download') }}">DOWNLOAD</a></li>
+            <li><a href="{{ url_for('about') }}">ABOUT</a></li>
           </ul>
 
           <ul class="nav navbar-nav navbar-right">
@@ -30,12 +30,86 @@
       </nav>
       <div id="loader"></div>
       <div class="content animate-bottom">
-        Tutorial here.
+         <a href="#0" class="cd-top" title="Back to Top">Top</a>
+        <div class="tutorial-title">PPaxe tutorial</div>
+        <hr>
+
+        <p class="text-pixel">
+          <strong>PPaxe</strong> is a tool to retrieve protein-protein and genetic interactions from the scientific literature by analyzing the sentences using the StanfordCoreNLP and classifying co-ocurrent proteins/genes as interacting/non-interacting with a Random Forest Classifier.
+        </p>
+
+        <!-- SEARCH FORM -->
+        <span class="tutorial-subtitle">Search Form</span>
+        <p class="text-pixel">
+          <strong>PPaxe</strong> takes a list of <strong>PubMed identifiers</strong> as an input, separated by commas or newline characters. Once the identifiers have been written, the user has to select either PubMed (to look for interactions in the Abstract of the articles) or PubMedCentral (to look for interactions in the full-text article when available on PubMedCentral). Please, note that all the identifiers have to be PubMed identifiers, whether the search is going to be performed on PubMed or PubMedCentral.
+        </p>
+
+        <p class="text-pixel">
+          Alternatively, users can also specify a PubMed query by clicking on the "INPUT PUBMED QUERY" buton and writing the query on the textbox. The PubMed identifiers will be written automatically on the PPaxe form.
+        </p>
+
+
+        <a target="_blank" href="{{ url_for('static', filename='tut1.png') }}">
+          <img class="tut-img" width="1000px" src="{{ url_for('static', filename='tut1.png') }}">
+        </a>
+
+        <p class="text-pixel">
+          When searching more than <strong>30 identifiers</strong>, PPaxe will request an e-mail to send the results when available, as the search may take a while. Although the search can still be performed without providing an e-mail, doing so is highly encouraged, as it allows users to close the application and still recieve the results.
+        </p>
+
+        <a target="_blank" href="{{ url_for('static', filename='tut2.png') }}">
+          <img class="tut-img" width="700px" src="{{ url_for('static', filename='tut2.png') }}">
+        </a>
+
+        
+      
+        <hr>
+
+        <!-- RESULTS -->
+        <span class="tutorial-subtitle">Results</span>
+
+        <p class="text-pixel">
+          Once the search has been performed, the results will be displayed at the bottom of the page. A small summary table and an option to download the report as a PDF will appear at the top of the results section.
+        </p>
+        <a target="_blank" href="{{ url_for('static', filename='tut3.png') }}">
+          <img class="tut-img" width="250px" src="{{ url_for('static', filename='tut3.png') }}">
+        </a>
+
+        <br>
+        <p class="text-pixel">
+          <strong>The Interactions</strong> found on the requested articles will be displayed on the "Interactions" table. This table includes a confidence value (which ranges from 0.5 to 1), the names of the proteins/genes, the PubMed identifier of the article, the publication year, and the sentence from which the interaction was retrieved (with the proteins displayed in blue, and the verbs in red). The table can be downloaded by clicking on the 'Download table' button.
+        </p>
+        <a target="_blank" href="{{ url_for('static', filename='tut4.png') }}">
+          <img class="tut-img" width="1000px" src="{{ url_for('static', filename='tut4.png') }}">
+        </a>
+
+        <br>
+        <p class="text-pixel">
+          <strong>The Proteins table</strong> shows how many times each protein or gene symbol has appeared in the different sentences. Each column corresponds to the different contexts in which the protein symbol appears: <strong>Total Count</strong> is the sum of all the ocurrences of a particular protein symbol; <strong>Int. Count</strong> corresponds to the number of times a particular protein appears in a retrieved interaction; <strong>Left/Right Count</strong> refer to the times a symbol is present on the "left" or the "right" of a particular interaction, e.g: <it>A (left)</it> interacts with <it>B (right)</it>.
+        </p>
+         <a target="_blank" href="{{ url_for('static', filename='tut6.png') }}">
+          <img class="tut-img" width="1000px" src="{{ url_for('static', filename='tut6.png') }}">
+        </a>
+
+
+        <p class="text-pixel">
+          PPaxe also provides a <strong>Graph visualization</strong>. The "Center" button resets the visualization:
+        </p>
+        <a target="_blank" href="{{ url_for('static', filename='tut5.png') }}">
+          <img class="tut-img" width="1000px" src="{{ url_for('static', filename='tut5.png') }}">
+        </a>
+
+        <br>
+        <p class="text-pixel">
+          Finally, PPaxe also displays several <strong>plots</strong> regarding the articles in which the proteins have been found.
+        </p>
+
       </div>
 
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
       <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+      <script src="{{ url_for('static', filename='back-to-top.js') }}"></script>
       <script>
       var myVar;
         function myFunction() {

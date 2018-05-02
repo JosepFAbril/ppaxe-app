@@ -11,6 +11,73 @@
    font-weight: bold;
 }
 
+.tutorial-title {
+   font-family: FreePixel !important;
+   font-size: 48px;
+}
+
+.text-pixel {
+  font-family: FreePixel !important;
+  font-size: 16px;
+}
+
+.tut-img {
+  display: block;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+#query-form {
+  padding-top: 20px;
+}
+
+#query-form-btn {
+  display: block;
+  width: 200px;
+  margin-bottom: 25px;
+}
+
+.tutorial-subtitle{
+  display: inline-block;
+  font-family: FreePixel !important;
+  font-size: 24px;
+  background-color: #FCF8E3;
+  color: #8a6d3b;
+  font-weight: bold;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-right: 10px;
+  padding-left: 10px;
+  margin-top: 20px;
+  margin-bottom: 15px;
+
+}
+
+.download-btn {
+  display: inline-block;
+  cursor: pointer;
+  font-family: FreePixel !important;
+  font-size: 18px;
+  background-color: #FCF8E3;
+  color: #8a6d3b !important;
+  font-weight: bold;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-right: 10px;
+  padding-left: 10px;
+  margin-top: 20px;
+  margin-bottom: 15px;
+}
+
+.download-btn a {
+  color: #8a6d3b;
+  text-decoration:none; 
+}
+
+.download-btn:hover {
+ background-color: #FFB600 !important;  
+ color: white;
+}
 .about {
   font-family: FreePixel !important;
 }
@@ -53,7 +120,10 @@ a.info-tooltip {
   height: 100%;
 }*/
 
-
+#pubmedqueryicon {
+  width: 24px;
+  height: 24px;
+}
 
 .navbar-logo {
   height: auto;
@@ -132,6 +202,35 @@ html {
   min-width: 100%;
   max-width: 100%;
   max-height: 600px;
+}
+
+#quick-help-body {
+  min-height: 375px;
+}
+
+#loader-small {
+  position: inline;
+  z-index: 100;
+  width: 50px;
+  height: 50px;
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #FFB600;
+  width: 50px;
+  height: 50px;
+  margin-top: 40px;
+  -webkit-animation: spin 2s linear infinite;
+  animation: spin 2s linear infinite;
+}
+
+#pmqueryloading {
+  display: none;
+}
+
+.btn-info {
+  color: #fff !important;
+  background-color: #5bc0de !important;
+  border-color: #46b8da !important;
 }
 
 
@@ -253,6 +352,19 @@ table {
 .funkyradio div {
   clear: both;
   overflow: hidden;
+}
+
+#pmqueryform {
+  margin-top: 30px;
+}
+
+#pmqueryerror {
+  margin-top: 30px;
+  display: none;
+}
+
+#pmqueryerror span {
+  color: red;
 }
 
 .funkyradio label {
